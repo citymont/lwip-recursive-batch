@@ -14,7 +14,7 @@ function createModel(source, target) {
 	}
 
 	for (var i = 0; i < pathModel.length; i++) {
-		if(! /^\..*/.test(pathModel[i])) { console.log(pathModel[i]);
+		if(! /^\..*/.test(pathModel[i])) {
 			var dir = newPath+'/'+pathModel[i];
 			if (!fs.existsSync(dir)){	
 				fs.mkdirSync(dir);
@@ -33,16 +33,15 @@ function cb(files,source,target,scaleValue) {
 function convert(files,i,source,target,scaleValue) {
 
 	fullPath = files[i];
-	console.log(i);
 
 		if(fullPath) {
 
 			lwip.open(fullPath, function(err, image){ 
+				
 				path = fullPath.split('/');
-				console.log(target+'/'+path[1]+'/'+path[2])
 				width = scaleValue;
-				height = scaleValue / ( image.width() / image.height() ) ;
-				console.log(width, height)
+				height = scaleValue / ( image.width() / image.height() );
+
 				image.batch()
 				    .resize(width, height)          // scale to 75% // 0.30 (for mobile)
 				    .writeFile(target+'/'+path[1]+'/'+path[2], function(err){
