@@ -1,6 +1,7 @@
 var lwip = require('lwip');
 var recursive = require('recursive-readdir');
 var fs = require('fs');
+var fileExistSync = require('./fileExistSync');
 
 var i = 0;
 
@@ -36,24 +37,36 @@ function convert(files,i,source,target,scaleValue) {
 
 		if(fullPath) {
 
-			lwip.open(fullPath, function(err, image){ 
-				
-				path = fullPath.split('/');
-				width = scaleValue;
-				height = scaleValue / ( image.width() / image.height() );
+			path = fullPath.split('/');
+			
+    			if(fileExistSync(target+'/'+path[4]+'/'+path[5])) {
 
-				image.batch()
-				    .resize(width, height)          // scale to 75% // 0.30 (for mobile)
-				    .writeFile(target+'/'+path[1]+'/'+path[2], function(err){
-				    	if(!err) {
-				    		console.log('done'); 
-				    		if(i < files.length) {
-				    			b = i+1; 
-				    			convert(files,b,source,target,scaleValue);
-				    		}
-				    	}
-				    });
-			});
+    				if(i < files.length) {
+					    b = i+1; 
+					    convert(files,b,source,target,scaleValue);
+					}
+
+    			} else {
+
+	    			lwip.open(fullPath, function(err, image){ 
+					
+						width = scaleValue;
+						height = scaleValue / ( image.width() / image.height() );
+
+						image.batch()
+						    .resize(width, height)
+						    .writeFile(target+'/'+path[4]+'/'+path[5], function(err){
+						    	if(!err) {
+						    		if(i < files.length) {
+						    			b = i+1; 
+						    			convert(files,b,source,target,scaleValue);
+						    		}
+						    	}
+						    });
+					});
+
+    			}
+    		
 
 		}
 	
