@@ -2,26 +2,29 @@ var lwip = require('lwip');
 var recursive = require('recursive-readdir');
 var fs = require('fs');
 var fileExistSync = require('./fileExistSync');
+var junk = require('junk');
 
 var i = 0;
 
 function createModel(source, target) {
 	
 	var pathModel = fs.readdirSync(source);
+	var pathModelFinal = pathModel.filter(junk.not);
 	var newPath = target;
 
 	if (!fs.existsSync(newPath)){	
 		fs.mkdirSync(newPath);
 	}
 
-	for (var i = 0; i < pathModel.length; i++) {
-		if(! /^\..*/.test(pathModel[i])) {
-			var dir = newPath+'/'+pathModel[i];
+	for (var i = 0; i < pathModelFinal.length; i++) {
+		if(fs.lstatSync(source+'/'+pathModelFinal[i]).isDirectory()) {
+			var dir = newPath+'/'+pathModelFinal[i];
 			if (!fs.existsSync(dir)){	
 				fs.mkdirSync(dir);
 			}
 		}
 	};
+
 }
 
 
@@ -38,8 +41,9 @@ function convert(files,i,source,target,scaleValue) {
 		if(fullPath) {
 
 			path = fullPath.split('/');
-			
-    			if(fileExistSync(target+'/'+path[4]+'/'+path[5])) {
+			pathFinal = target+'/'+path[1]; // Change if there is multiple path
+
+    			if(fileExistSync(pathFinal)) {
 
     				if(i < files.length) {
 					    b = i+1; 
@@ -55,13 +59,13 @@ function convert(files,i,source,target,scaleValue) {
 
 						image.batch()
 						    .resize(width, height)
-						    .writeFile(target+'/'+path[4]+'/'+path[5], function(err){
+						    .writeFile(pathFinal, function(err){
 						    	if(!err) {
 						    		if(i < files.length) {
 						    			b = i+1; 
 						    			convert(files,b,source,target,scaleValue);
 						    		}
-						    	}
+						    	} 
 						    });
 					});
 

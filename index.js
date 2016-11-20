@@ -1,6 +1,6 @@
 var scale = require('./scale');
 
-var target = 'pics_500';
+var target = 'pics_1500';
 var source = 'pics';
 var scaleValue = 500; //width
 

@@ -9,7 +9,8 @@
   "author": "Thibaut villemont",
   "license": "MIT",
   "dependencies": {
-    "lwip": "0.0.8",
+    "junk": "^2.0.0",
+    "lwip": "0.0.9",
     "recursive-readdir": "^1.3.0"
   }
 }
